@@ -1,0 +1,5 @@
+andrey.py
+*env
+*venv
+__pycache__
+.vscode
