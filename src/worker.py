@@ -40,10 +40,9 @@ class Worker:
 
                 task_execute = TaskExecute(
                     task_id=new_task.task_id,
-                    status=new_task.status,
+                    create_time=new_task.create_time,
                     function_name=function.__name__,
                     function_args=args,
-                    create_time=new_task.create_time,
                 )
 
                 await self.broker.produce(message=task_execute.model_dump_json())
@@ -112,6 +111,13 @@ class Worker:
 
     async def _retry_task_execution(self, task_execute: TaskExecute) -> None:
         if task_execute.retry_count == self._max_retries:
+            failed_task = TaskInDB(
+                task_id=task_execute.task_id,
+                create_time=task_execute.create_time,
+                status=TaskStatus.FAILED,
+            )
+
+            await self.redis.set(failed_task.task_id, failed_task.model_dump_json())
             logger.info(f"task with id={task_execute.task_id} rejected")
             return
 
