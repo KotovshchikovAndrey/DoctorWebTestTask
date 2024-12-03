@@ -23,10 +23,15 @@ class DatabaseSettings(BaseSettings):
         return f"redis://{self.host}:{self.port}"
 
 
-class Settings(BaseModel):
+class WorkerSettings(BaseSettings):
     max_workers: Annotated[int, Field(default=2)]
+    max_retries: Annotated[int, Field(default=3)]
+
+
+class Settings(BaseModel):
     database: DatabaseSettings = DatabaseSettings()
     broker: BrokerSettings = BrokerSettings()
+    worker: WorkerSettings = WorkerSettings()
 
 
 settings = Settings()

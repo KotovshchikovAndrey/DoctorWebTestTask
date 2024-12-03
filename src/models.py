@@ -38,3 +38,4 @@ class TaskExecute(TaskBase):
     task_id: Annotated[str, Field(default_factory=lambda: uuid4().hex)]
     function_name: str
     function_args: tuple
+    retry_count: Annotated[int, Field(ge=0, default=0)]
